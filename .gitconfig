@@ -1,0 +1,160 @@
+[core]
+	editor = vim
+	autocrlf = input
+[diff]
+	external = /home/rui/git-meld.sh
+
+[push]
+   default = current
+
+[pager]
+	color = true
+
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+    interactive = auto
+    ui = auto
+
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+
+[color "diff"]
+  meta = yellow bold
+  frag = magenta
+  plain = white bold
+  old = red bold
+  new = green bold
+  commit = yellow bold
+  func = green dim
+  #plain = white bold
+
+[color "status"]
+added = yellow
+changed = green
+untracked = cyan
+
+[alias]
+	#alias
+	alias = !sh -c '[ $# = 2 ] && git config --global alias.\"$1\" \"$2\" && exit 0 || echo \"usage: git alias <new alias> <original command>\" >&2
+	la = "!git config -l | grep alias | cut -c 7-"
+
+	#shortcut-key
+	a = add
+	s = status -s
+	b = branch
+	d = diff
+	h = help
+	l = log -3
+	dt = difftool
+	co = checkout
+	cm = commit -m
+	cma = commit -a -m
+	cp = cherry-pick
+	lsf = ls-files
+	lsm = ls-files -m
+	mg = merge --no-ff
+
+	# log related
+	# from http://blog.kfish.org/2010/04/git-lola.html
+	ls = log -10 --pretty=format:"%h\\ (%ad)\\ %Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	le = log --oneline --decorate
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+	ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+	lds = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+
+	# show a log without the formating, occasionaly handy for c&p
+	rawlog = log --format=\"format:commit %H%nAuthor:%an%n%n%B%n\"
+
+	dl = "!git ll -1"
+	lc  = "!f() { git ll "$1"^.."$1"; }; f"
+
+	# log everything with $1 string in the diff content
+	timegrep = log -S
+
+	# like above, but show the diff
+	diffgrep = log -p -S
+
+	greplog = log --grep
+
+	#diff
+	dc = diff --cached
+	dr = "!f() { git diff "$1"^.."$1"; }; f"
+	dh = diff HEAD^..HEAD
+
+	#branch
+	# what branch contains the sha
+	contains = branch --contains
+
+	 # show a list of branches sorted by time of last commit
+	 brage = "!f() { git for-each-ref --sort=committerdate refs/heads $1 --format=\"%(refname:short)\" ; }; g() { for C in $(f $1) ; do git show -s --pretty=format:\"%Cgreen%ci %Cblue%cr%Creset $C\" \"$C\" -- ; done; }; g "
+
+	 # show a list of every branch and show their latests commit, sorted by last commit
+	 brlog = "!sh -c 'for C in $(git for-each-ref --sort=committerdate refs/heads --format=\"%(refname:short)\") ; do git show -s --pretty=format:\"%Cgreen%ci %Cblue%cr%Creset $C\" \"$C\" -- ; git show --stat -s $C ; echo; done'"
+
+	#delete branch whose name contain $1
+	brdel = !bash -c 'git branch --list $1 | xargs git branch -d' -
+
+	# branches that are merged locally already, note this includes master itself
+	lurkers = branch --merged spx_dev
+
+	#commit
+	amend = commit --amend
+
+	#pull
+	# not a fan of random merges
+	pull = pull --ff-only
+
+	#gitk
+	k = !gitk
+	gitkconflict = !gitk --left-right HEAD...MERGE_HEAD
+
+	new = !sh -c 'git log $1@{1}..$1@{0} "$@"'
+	whois = "!sh -c 'git log -i -1 --pretty=\"format:%an <%ae>\n\" --author=\"$1\"' -"
+        whatis = show -s --pretty='tformat:%h (%s, %ad)' --date=short
+
+	forkdiff = !bash -c 'git diff $(git merge-base "$1" "$2") "$2" "${@: 3}" ' -
+
+	#stage & unstage
+	addall = !git lsm | xargs git add
+
+	# remove a file from index
+	unadd = git reset HEAD
+
+	uneditall = !git lsm | xargs git checkout --
+
+	r = reset
+	resetall = reset --hard HEAD
+
+	#stash
+	sl = stash list
+	sa = stash apply
+	ss = stash save
+
+	# find file by name
+	f = "!git ls-files | grep -i"
+
+	# find content by name
+	grep = grep -Ii
+
+	#from http://serverfault.com/questions/175052/how-to-tell-which-local-branch-is-tracking-which-remote-branch-in-git
+	upstream = rev-parse --symbolic-full-name --abbrev-ref HEAD@{upstream}
+
+	# from https://gist.github.com/492227
+	lost = !"git fsck | awk '/dangling commit/ {print $3}' | git show --format='SHA1: %C(yellow)%h%Creset %f' --stdin | awk '/SHA1/ {sub(\"SHA1: \", \"\"); print}'"
+
+	 # show a list of last change in each branch of a given path
+	 # roly poly fileheads
+	 fileheads = "!sh -c 'for C in $(git for-each-ref --sort=committerdate refs/heads --format=\"%(refname:short)\"| tac) ; do git show -s --pretty=format:\"%Cgreen%ci %Cblue%cr%Creset $C\" \"$C\" -- ; git --no-pager log -p -1 $C -- $0; echo; done'"
+
+	 # show a specifc version of a file
+	 # git show rev:filename
+
+	 # GIT_TRACE=true to turn on more debugging
+	 # GIT_SSH for debug ssh stuff (needs to point to
+	 # a wrapper script to add args, aka "ssh -v $*" in a shell script)
