@@ -14,5 +14,6 @@ alias uuu='cd ../../../'
 alias rm='rm -i'
 
 alias g='git'
+alias gg='git grep -i'
 
 alias fn='find . -iname $1'
