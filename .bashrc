@@ -13,7 +13,13 @@ alias uuu='cd ../../../'
 
 alias rm='rm -i'
 
-alias g='git'
+# git related
+#alias g='git'
 alias gg='git grep -i'
+alias gd='git diff'
+alias gst='git status'
+alias gb='git branch'
+alias gl='git ls'
 
 alias fn='find . -iname $1'
+alias st='st 2>/dev/null'
